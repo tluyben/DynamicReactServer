@@ -1,6 +1,9 @@
 #!/bin/bash
 
-cp tests/* /tmp/
+//cp tests/* /tmp/
+node dumpmongotmp.js 632edf1baed096b6f8b677fb js tests/test1
+node dumpmongotmp.js 632edf21aed096b6f8b67826 ts tests/test2
+
 rm -fR builds
 rm -fR serve
 
