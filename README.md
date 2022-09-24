@@ -5,6 +5,9 @@ via a node/express request.
  
 Made dynamic rendering of snippets in an iframe for another PoC.  
 
+Note: this is a PoC and should not be used in production. If you don't know 
+how this works, then do not run or try it. 
+
 # Prereq:
 
 - Linux or Mac cli (tested on both) 
