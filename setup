@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# MAKE SURE YOU HAVE node >=18 
+#nvm install 18
+#nvm use 18 
+
+npx create-react-app js-base
+npx create-react-app ts-base --template typescript
+
+cp App.js js-base/src
+cp App.tsx ts-base/src
+
+node addhomepage.js
+

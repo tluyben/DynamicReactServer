@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cp tests/* /tmp/
+rm -fR builds
+rm -fR serve
+
+node index.js
