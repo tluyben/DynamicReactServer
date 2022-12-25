@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const port = 3000
+let port = 3000
 const fs = require('fs')
 const shell = require('shelljs');
 const dotenv = require('dotenv');
@@ -53,6 +53,8 @@ app.get('/', async (req, res) => {
   }
 })
 
+port = process.env.REACT_SERVER_PORT||port 
+console.log(`Setting up on port ${port}`)
 app.listen(port, async () => {
   client = await connect(process.env.MONGO_HOST, process.env.MONGO_LOGIN, process.env.MONGO_PASS, process.env.MONGO_DB)
   console.log(`Example app listening on port ${port}`)
