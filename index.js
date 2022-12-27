@@ -37,14 +37,14 @@ app.get('/', async (req, res) => {
       // build 
       let errors = null
       if (lang === 'ts') {
-        if (contents.indexOf('function App(') > 0) {
+        if (contents.indexOf('function App(') >= 0) {
           errors = shell.exec('./ts-build-src-clean ' + id, { silent: true }).stderr
 
         } else {
           errors = shell.exec('./ts-build-src ' + id, { silent: true }).stderr
         }
       } else {
-        if (contents.indexOf('function App(') > 0) {
+        if (contents.indexOf('function App(') >= 0) {
           errors = shell.exec('./js-build-src-clean ' + id, { silent: true }).stderr
         } else {
           errors = shell.exec('./js-build-src ' + id, { silent: true }).stderr
