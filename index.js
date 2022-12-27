@@ -37,10 +37,19 @@ app.get('/', async (req, res) => {
       // build 
       let errors = null
       if (lang === 'ts') {
-        errors = shell.exec('./ts-build-src ' + id, { silent: true }).stderr
+        if (contents.indexOf('function App(') > 0) {
+          errors = shell.exec('./ts-build-src-clean ' + id, { silent: true }).stderr
+
+        } else {
+          errors = shell.exec('./ts-build-src ' + id, { silent: true }).stderr
+        }
         //errors = shell.exec('ls -aiowejfaeiwfjwa', {silent:true}).stderr
       } else {
-        errors = shell.exec('./js-build-src ' + id, { silent: true }).stderr
+        if (contents.indexOf('function App(') > 0) {
+          errors = shell.exec('./js-build-src-clean ' + id, { silent: true }).stderr
+        } else {
+          errors = shell.exec('./js-build-src ' + id, { silent: true }).stderr
+        }
       }
       if (errors) {
         // make sure we don't have serve
@@ -53,7 +62,7 @@ app.get('/', async (req, res) => {
   }
 })
 
-port = process.env.REACT_SERVER_PORT||port 
+port = process.env.REACT_SERVER_PORT || port
 console.log(`Setting up on port ${port}`)
 app.listen(port, async () => {
   client = await connect(process.env.MONGO_HOST, process.env.MONGO_LOGIN, process.env.MONGO_PASS, process.env.MONGO_DB)

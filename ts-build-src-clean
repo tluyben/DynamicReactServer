@@ -15,7 +15,13 @@ rm -fR serve/$1
  
 cp -a ts-base builds/$1
 
-cp /tmp/$1 builds/$1/src/App.tsx
+BEGIN=`cat builds/$1/src/App.tsx|grep xxxcustomcodexxx -B 100000|sed -e '\$ d'`
+END=`cat builds/$1/src/App.tsx|grep xxxcustomcodexxx -A 100000|sed -e '1d'`
+MID=`cat /tmp/$1`
+
+echo "$BEGIN" > builds/$1/src/App.tsx
+echo "$MID" >> builds/$1/src/App.tsx
+echo "$END" >> builds/$1/src/App.tsx
 
 cd builds/$1 
 npm run build

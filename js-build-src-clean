@@ -2,7 +2,7 @@
 
 if [[ "$1" == "" ]]
 then 
- echo "Usage: ./ts-build-src TMPID"
+ echo "Usage: ./js-build-src-clean TMPID"
  exit
 fi
 
@@ -13,9 +13,9 @@ mkdir -p serve
 rm -fR builds/$1
 rm -fR serve/$1
  
-cp -a ts-base builds/$1
+cp -a js-base builds/$1
 
-cp /tmp/$1 builds/$1/src/App.tsx
+cp /tmp/$1 builds/$1/src/App.js
 
 cd builds/$1 
 npm run build
@@ -25,4 +25,3 @@ mv builds/$1/build serve/$1
 #cleanup
 rm -fR builds/$1 
 rm -f /tmp/$1
-
