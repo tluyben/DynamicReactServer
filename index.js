@@ -43,7 +43,6 @@ app.get('/', async (req, res) => {
         } else {
           errors = shell.exec('./ts-build-src ' + id, { silent: true }).stderr
         }
-        //errors = shell.exec('ls -aiowejfaeiwfjwa', {silent:true}).stderr
       } else {
         if (contents.indexOf('function App(') > 0) {
           errors = shell.exec('./js-build-src-clean ' + id, { silent: true }).stderr
