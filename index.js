@@ -5,6 +5,7 @@ const fs = require('fs')
 const shell = require('shelljs');
 const dotenv = require('dotenv');
 dotenv.config();
+const cors = require('cors')
 const bodyParser = require('body-parser')
 
 //const { queryMongo, connect } = require('./mongoconn.js')
@@ -12,6 +13,7 @@ const bodyParser = require('body-parser')
 app.use(express.static('serve'))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+app.use(cors())
 
 let client = null
 
