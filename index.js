@@ -5,13 +5,18 @@ const fs = require('fs')
 const shell = require('shelljs');
 const dotenv = require('dotenv');
 dotenv.config();
+const bodyParser = require('body-parser')
+
 //const { queryMongo, connect } = require('./mongoconn.js')
 
 app.use(express.static('serve'))
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 let client = null
 
 app.post('/save', async (req, res) => {
+  console.log(req)
   let source = req.body.source
   const type = req.body.type
   let lang = req.body.lang ?? 'ts'
@@ -44,7 +49,7 @@ app.post('/save', async (req, res) => {
 })
 
 app.get('/', async (req, res) => {
-  l//et source = atob(req.query.source)
+  //let source = atob(req.query.source)
   //console.log(source)
   //let lang = req.query.lang ?? 'ts'
 
@@ -59,7 +64,7 @@ app.get('/', async (req, res) => {
     // does it exist? 
     //if (!id) id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
     //console.log(id)
-    if (!fs.fileExistsSync("/tmp/" + id)) {
+    if (!fs.existsSync("/tmp/" + id)) {
       res.send('Not found')
       return
     }
@@ -81,21 +86,21 @@ app.get('/', async (req, res) => {
 
       // build 
       let errors = null
-      if (lang === 'ts') {
-        //if (contents.indexOf('function App(') >= 0) {
-        if (type === "logic") {
-          errors = shell.exec('./ts-build-src-clean ' + id, { silent: true }).stderr
+      //if (lang === 'ts') {
+      //if (contents.indexOf('function App(') >= 0) {
+      if (type === "logic") {
+        errors = shell.exec('./ts-build-src-clean ' + id, { silent: true }).stderr
 
-        } else {
-          errors = shell.exec('./ts-build-src ' + id, { silent: true }).stderr
-        }
       } else {
-        if (contents.indexOf('function App(') >= 0) {
-          errors = shell.exec('./js-build-src-clean ' + id, { silent: true }).stderr
-        } else {
-          errors = shell.exec('./js-build-src ' + id, { silent: true }).stderr
-        }
+        errors = shell.exec('./ts-build-src ' + id, { silent: true }).stderr
       }
+      // } else {
+      //   if (contents.indexOf('function App(') >= 0) {
+      //     errors = shell.exec('./js-build-src-clean ' + id, { silent: true }).stderr
+      //   } else {
+      //     errors = shell.exec('./js-build-src ' + id, { silent: true }).stderr
+      //   }
+      // }
       if (errors.indexOf('plugin-proposal-private-property-in-object" package without') >= 0) {
         errors = ''
       }
