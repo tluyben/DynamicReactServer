@@ -59,6 +59,10 @@ app.get('/', async (req, res) => {
     // does it exist? 
     //if (!id) id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
     //console.log(id)
+    if (!fs.fileExistsSync("/tmp/" + id)) {
+      res.send('Not found')
+      return
+    }
     if (fs.existsSync("./serve/" + id)) {
       // redirect 
       res.redirect(301, '/' + id)
