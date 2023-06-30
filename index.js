@@ -11,15 +11,22 @@ app.use(express.static('serve'))
 
 let client = null
 
-app.post('/', async (req, res) => {
-  const source = req.body.source
-  let lang = req.body.lang ?? 'ts'
-  const type = req.body.type
+app.get('/', async (req, res) => {
+  let source = atob(req.query.source)
+  console.log(source)
+  let lang = req.query.lang ?? 'ts'
 
-  if (!id || !lang) {
+  // GUI | data | logic | test | ... 
+  const type = req.query.type
+
+  let id = req.query.id
+
+  if (!source || !lang || !type) {
     res.send('Hello World!')
   } else {
     // does it exist? 
+    if (!id) id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+    console.log(id)
     if (fs.existsSync("./serve/" + id)) {
       // redirect 
       res.redirect(301, '/' + id)
@@ -34,25 +41,51 @@ app.post('/', async (req, res) => {
       //lang = record[0].lang
       //const contents = record[0].contents
 
+
+      if (type === "logic") {
+        const functionName = source.match(/function\s+(\w+)\s*\(/)[1];
+
+        source = `
+        const [consoleResult, setConsoleResult] = React.useState('')
+        console.log = (msg) => { 
+          setConsoleResult(msg)
+        }
+       
+        ${source}
+        React.useEffect(() => {
+          ${functionName}()
+        }, [])
+        return (
+          <div>{consoleResult}</div>
+          )
+        `
+
+      }
       // generate a random id
-      const id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
       fs.writeFileSync("/tmp/" + id, source)
 
       // build 
       let errors = null
       if (lang === 'ts') {
         //if (contents.indexOf('function App(') >= 0) {
-        //errors = shell.exec('./ts-build-src-clean ' + id, { silent: true }).stderr
+        if (type === "logic") {
+          errors = shell.exec('./ts-build-src-clean ' + id, { silent: true }).stderr
 
-        // } else {
-        errors = shell.exec('./ts-build-src ' + id, { silent: true }).stderr
-        // }
+        } else {
+          errors = shell.exec('./ts-build-src ' + id, { silent: true }).stderr
+        }
       } else {
         if (contents.indexOf('function App(') >= 0) {
           errors = shell.exec('./js-build-src-clean ' + id, { silent: true }).stderr
         } else {
           errors = shell.exec('./js-build-src ' + id, { silent: true }).stderr
         }
+      }
+      if (errors.indexOf('plugin-proposal-private-property-in-object" package without') >= 0) {
+        errors = ''
+      }
+      if (errors.indexOf('babel-preset-react-app is part of the create-react-app project') >= 0) {
+        errors = ''
       }
       if (errors) {
         // make sure we don't have serve

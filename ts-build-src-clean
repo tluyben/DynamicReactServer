@@ -29,6 +29,6 @@ cd ../..
 mv builds/$1/build serve/$1
 
 #cleanup
-rm -fR builds/$1 
-rm -f /tmp/$1
+# rm -fR builds/$1 
+# rm -f /tmp/$1
 

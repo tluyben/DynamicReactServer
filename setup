@@ -4,10 +4,10 @@
 #nvm install 18
 #nvm use 18 
 
-npx --force -y create-react-app js-base
+#npx --force -y create-react-app js-base
 npx --force -y create-react-app ts-base --template typescript
 
-cp App.js js-base/src
+#cp App.js js-base/src
 cp App.tsx ts-base/src
 
 node addhomepage.js
