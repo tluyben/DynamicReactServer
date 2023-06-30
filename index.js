@@ -11,22 +11,54 @@ app.use(express.static('serve'))
 
 let client = null
 
+app.post('/save', async (req, res) => {
+  let source = req.body.source
+  const type = req.body.type
+  let lang = req.body.lang ?? 'ts'
+
+  const id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+
+  if (type === "logic") {
+    const functionName = source.match(/function\s+(\w+)\s*\(/)[1];
+
+    source = `
+        const [consoleResult, setConsoleResult] = React.useState('')
+        console.log = (msg) => { 
+          setConsoleResult(msg)
+        }
+       
+        ${source}
+        React.useEffect(() => {
+          ${functionName}()
+        }, [])
+        return (
+          <div>{consoleResult}</div>
+          )
+        `
+
+  }
+  // generate a random id
+  fs.writeFileSync("/tmp/" + id, source)
+
+  res.status(200).json({ id: id })
+})
+
 app.get('/', async (req, res) => {
-  let source = atob(req.query.source)
-  console.log(source)
-  let lang = req.query.lang ?? 'ts'
+  l//et source = atob(req.query.source)
+  //console.log(source)
+  //let lang = req.query.lang ?? 'ts'
 
   // GUI | data | logic | test | ... 
   const type = req.query.type
 
   let id = req.query.id
 
-  if (!source || !lang || !type) {
+  if (!id || !type) {
     res.send('Hello World!')
   } else {
     // does it exist? 
-    if (!id) id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-    console.log(id)
+    //if (!id) id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+    //console.log(id)
     if (fs.existsSync("./serve/" + id)) {
       // redirect 
       res.redirect(301, '/' + id)
@@ -42,27 +74,6 @@ app.get('/', async (req, res) => {
       //const contents = record[0].contents
 
 
-      if (type === "logic") {
-        const functionName = source.match(/function\s+(\w+)\s*\(/)[1];
-
-        source = `
-        const [consoleResult, setConsoleResult] = React.useState('')
-        console.log = (msg) => { 
-          setConsoleResult(msg)
-        }
-       
-        ${source}
-        React.useEffect(() => {
-          ${functionName}()
-        }, [])
-        return (
-          <div>{consoleResult}</div>
-          )
-        `
-
-      }
-      // generate a random id
-      fs.writeFileSync("/tmp/" + id, source)
 
       // build 
       let errors = null
